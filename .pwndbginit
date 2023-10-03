@@ -1,0 +1,44 @@
+source /home/deepunk/Public/pwndbg/gdbinit.py
+source /home/deepunk/Public/Pwngdb/pwngdb.py
+source /home/deepunk/Public/Pwngdb/angelheap/gdbinit.py
+source /home/deepunk/Public/splitmind/gdbinit.py
+
+define bp
+  b *$rebase($arg0)
+end
+define pla
+  libc
+  printf "libc+offset: 0x%lx\n", $libc + $arg0
+end
+define pl
+  libc
+  printf "offset: 0x%lx\n", $arg0 - $libc
+end
+
+
+
+define hook-run
+python
+import angelheap
+angelheap.init_angelheap()
+end
+end
+
+set context-clear-screen on
+set follow-fork-mode parent
+
+python
+import splitmind
+(splitmind.Mind()
+.tell_splitter(show_titles=False)
+.left(display="regs", size="40%")
+.below(display="disasm", size="50%")
+.above(of="main", display="stack", size="45%")
+.right(display="backtrace", size="25%")
+.right(of="main", cmd="ipython", size="32%")
+.show("legend", on="stack")
+).build(nobanner=True)
+end
+
+set context-stack-lines 12
+
