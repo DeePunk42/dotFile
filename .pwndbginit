@@ -1,7 +1,8 @@
-source /home/deepunk/Public/pwndbg/gdbinit.py
-source /home/deepunk/Public/Pwngdb/pwngdb.py
-source /home/deepunk/Public/Pwngdb/angelheap/gdbinit.py
-source /home/deepunk/Public/splitmind/gdbinit.py
+source /home/deepunk/pwn/tools/pwndbg/gdbinit.py
+source /home/deepunk/pwn/tools/Pwngdb/pwngdb.py
+source /home/deepunk/pwn/tools/Pwngdb/angelheap/gdbinit.py
+source /home/deepunk/pwn/tools/splitmind/gdbinit.py
+source /home/deepunk/scripts/kdbg/kdbg.py
 
 define bp
   b *$rebase($arg0)
@@ -13,6 +14,31 @@ end
 define pl
   libc
   printf "offset: 0x%lx\n", $arg0 - $libc
+end
+
+define show_linkmap
+    set $map = (struct link_map *) $arg0
+    printf "[34m[+] link_map at %p :[0m \n", $arg0
+    print *$map
+    set $l_addr = (char *) $map->l_addr
+    set $l_name = (char *) $map->l_name
+    printf "\n[33m\tname: %s [0m", $l_name
+    printf "\n[33m\taddr: %p [0m", $l_addr
+    printf "[0m\n\n"
+    printf "[0m\n\n"
+end
+
+define link_maps
+    set $map = (struct link_map *) $arg0
+    while ($map != 0)
+        set $l_addr = (char *) $map->l_addr
+        set $l_name = (char *) $map->l_name
+        printf "[34m[+] link_map at %p [0m", $map
+        printf "\n[33m\tname: %s [0m", $l_name
+        printf "\n[33m\taddr: %p [0m", $l_addr
+        printf "[0m\n\n"
+        set $map = $map->l_next
+    end
 end
 
 
@@ -31,14 +57,14 @@ python
 import splitmind
 (splitmind.Mind()
 .tell_splitter(show_titles=False)
-.left(display="regs", size="40%")
-.below(display="disasm", size="50%")
-.above(of="main", display="stack", size="45%")
-.right(display="backtrace", size="25%")
-.right(of="main", cmd="ipython", size="32%")
+.left(display="regs", size="36%")
+.below(display="disasm", size="59%")
+.above(of="main", display="stack", size="42%")
+.right(display="backtrace", size="21%")
+.right(of="main", cmd="ipython", size="30%")
 .show("legend", on="stack")
 ).build(nobanner=True)
 end
 
-set context-stack-lines 12
-
+set context-stack-lines 14
+set context-code-lines 20

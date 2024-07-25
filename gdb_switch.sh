@@ -1,10 +1,10 @@
 #!/bin/bash
 function Mode_change {
     name=$1
-    gdbinitfile=${HOME}/.gdbinit    #这个路径按照你的实际情况修改
+    gdbinitfile=${HOME}/.gdbinit    
     
-    gef="${HOME}/dotConfig/.gefinit"   #这个路径按照你的实际情况修改
-    pwndbg="${HOME}/dotConfig/.pwndbginit"   #这个路径按照你的实际情况修改
+    gef="${HOME}/.dotFile/.gefinit"   
+    pwndbg="${HOME}/.dotFile/.pwndbginit"
     if [ $name -eq "1" ];then
         ln -fs ${gef} ${gdbinitfile}
         echo -e "Enjoy the gef!\n"
